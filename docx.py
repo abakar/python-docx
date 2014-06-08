@@ -27,7 +27,11 @@ try:
 except ImportError:
     TAGS = {}
 
-from exceptions import PendingDeprecationWarning
+try:
+    from exceptions import PendingDeprecationWarning
+except ImportError:
+    pass
+
 from warnings import warn
 
 import logging
@@ -349,7 +353,10 @@ def table(contents, heading=True, colw=None, cwunit='dxa', tblw=0,
                 k = 'all' if 'all' in borders.keys() else b
                 attrs = {}
                 for a in borders[k].keys():
-                    attrs[a] = unicode(borders[k][a])
+                    try:
+                        attrs[a] = unicode(borders[k][a])
+                    except NameError:
+                        attrs[a] = str(borders[k][a])
                 borderelem = makeelement(b, attributes=attrs)
                 tableborders.append(borderelem)
         tableprops.append(tableborders)
@@ -977,11 +984,16 @@ def appproperties():
 
     """
     appprops = makeelement('Properties', nsprefix='ep')
-    appprops = etree.fromstring(
+    appprops_content = (
         '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Properties x'
         'mlns="http://schemas.openxmlformats.org/officeDocument/2006/extended'
         '-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocum'
-        'ent/2006/docPropsVTypes"></Properties>')
+        'ent/2006/docPropsVTypes"></Properties>'
+    )
+    try:
+        appprops = etree.fromstring(appprops_content)
+    except ValueError:
+        appprops = etree.fromstring(appprops_content.encode('utf-8'))
     props =\
         {'Template':             'Normal.dotm',
          'TotalTime':            '6',
