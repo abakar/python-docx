@@ -481,13 +481,13 @@ def picture(
 
         relationshiplist.append([
             'http://schemas.openxmlformats.org/officeDocument/2006/relations'
-            'hips/image', 'media/' + picname
+            'hips/image', 'media/' + basename(picname)
         ])
 
         media_dir = join(template_dir, 'word', 'media')
         if not os.path.isdir(media_dir):
             os.mkdir(media_dir)
-        shutil.copyfile(picname, join(media_dir, picname))
+        shutil.copyfile(picname, join(media_dir, basename(picname)))
 
     image = Image.open(picpath)
 
